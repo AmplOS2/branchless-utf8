@@ -1,13 +1,13 @@
-CC     = cc -std=c99
-CFLAGS = -Wall -Wextra -O3 -g3 -march=native
+CXX      ?= c++
+CXXFLAGS ?= -std=c++1z -Wall -Wextra -O3 -g3
 
 all: benchmark tests
 
-benchmark: test/benchmark.c utf8.h test/utf8-encode.h test/bh-utf8.h
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ test/benchmark.c $(LDLIBS)
+benchmark: test/benchmark.cc utf8.hh test/utf8-encode.hh test/bh-utf8.h
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ test/benchmark.cc $(LDLIBS)
 
-tests: test/tests.c utf8.h test/utf8-encode.h
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ test/tests.c $(LDLIBS)
+tests: test/tests.cc utf8.hh test/utf8-encode.hh
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ test/tests.cc $(LDLIBS)
 
 bench: benchmark
 	./benchmark

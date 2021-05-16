@@ -1,4 +1,3 @@
 # Branchless UTF-8 Decoder
 
-Full article:
-[A Branchless UTF-8 Decoder](http://nullprogram.com/blog/2017/10/06/)
+A port of the branchless UTF-8 decoder to modern C++.
