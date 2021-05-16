@@ -104,7 +104,7 @@ int main(void) {
                 uint32_t       c;
                 long           count = 0;
                 while(p < end) {
-                        p = utf8_decode(p, &c, &e);
+                        p = utf8_decode(p, c, e);
                         errors += !!e; // force errors to be checked
                         count++;
                 }

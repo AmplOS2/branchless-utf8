@@ -1,5 +1,5 @@
 CXX      ?= c++
-CXXFLAGS ?= -std=c++1z -Wall -Wextra -O3 -g3
+CXXFLAGS ?= -std=c++1z -Wall -Wextra -O3
 
 all: benchmark tests
 

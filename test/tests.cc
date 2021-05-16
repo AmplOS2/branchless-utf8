@@ -27,7 +27,7 @@ int main(void) {
                                 uint32_t c;
                                 uint8_t  buf[8] = {0};
                                 uint8_t *end    = utf8_encode(buf, i);
-                                uint8_t *res    = utf8_decode(buf, &c, &e);
+                                uint8_t *res    = utf8_decode(buf, c, e);
                                 failures += end != res || c != i || e;
                         }
                 }
@@ -42,7 +42,7 @@ int main(void) {
                         uint32_t      c;
                         unsigned char buf[8] = {0};
                         utf8_encode(buf, i);
-                        unsigned char *end = utf8_decode(buf, &c, &e);
+                        unsigned char *end = utf8_decode(buf, c, e);
                         failures += !e;
                         failures += end - buf != 4;
                 }
@@ -57,7 +57,7 @@ int main(void) {
                         uint32_t      c;
                         unsigned char buf[8] = {0};
                         utf8_encode(buf, i);
-                        utf8_decode(buf, &c, &e);
+                        utf8_decode(buf, c, e);
                         failures += !e;
                 }
                 TEST(failures == 0, "surrogate halves, errors: %ld", failures);
@@ -70,21 +70,21 @@ int main(void) {
                 unsigned char *end;
 
                 unsigned char buf2[8] = {0xc0, 0xA4};
-                end                   = utf8_decode(buf2, &c, &e);
+                end                   = utf8_decode(buf2, c, e);
                 TEST(e, "non-canonical len 2, 0x%02x", e);
                 TEST(end == buf2 + 2,
                      "non-canonical recover 2, U+%04lx",
                      (unsigned long)c);
 
                 unsigned char buf3[8] = {0xe0, 0x80, 0xA4};
-                end                   = utf8_decode(buf3, &c, &e);
+                end                   = utf8_decode(buf3, c, e);
                 TEST(e, "non-canonical len 3, 0x%02x", e);
                 TEST(end == buf3 + 3,
                      "non-canonical recover 3, U+%04lx",
                      (unsigned long)c);
 
                 unsigned char buf4[8] = {0xf0, 0x80, 0x80, 0xA4};
-                end                   = utf8_decode(buf4, &c, &e);
+                end                   = utf8_decode(buf4, c, e);
                 TEST(e, "non-canonical encoding len 4, 0x%02x", e);
                 TEST(end == buf4 + 4,
                      "non-canonical recover 4, U+%04lx",
@@ -98,19 +98,19 @@ int main(void) {
 
                 /* Invalid first byte */
                 unsigned char buf0[4] = {0xff};
-                len = (unsigned char *)utf8_decode(buf0, &c, &e) - buf0;
+                len = (unsigned char *)utf8_decode(buf0, c, e) - buf0;
                 TEST(e, "bogus [ff] 0x%02x U+%04lx", e, (unsigned long)c);
                 TEST(len == 1, "bogus [ff] recovery %d", len);
 
                 /* Invalid first byte */
                 unsigned char buf1[4] = {0x80};
-                len = (unsigned char *)utf8_decode(buf1, &c, &e) - buf1;
+                len = (unsigned char *)utf8_decode(buf1, c, e) - buf1;
                 TEST(e, "bogus [80] 0x%02x U+%04lx", e, (unsigned long)c);
                 TEST(len == 1, "bogus [80] recovery %d", len);
 
                 /* Looks like a two-byte sequence but second byte is wrong */
                 unsigned char buf2[4] = {0xc0, 0x0a};
-                len = (unsigned char *)utf8_decode(buf2, &c, &e) - buf2;
+                len = (unsigned char *)utf8_decode(buf2, c, e) - buf2;
                 TEST(e, "bogus [c0 0a] 0x%02x U+%04lx", e, (unsigned long)c);
                 TEST(len == 2, "bogus [c0 0a] recovery %d", len);
         }
