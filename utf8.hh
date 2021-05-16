@@ -4,7 +4,7 @@
 namespace {
 
 /**
- * Decode the next character, `c`, from `buf`, reporting errors in `e`.
+ * Decode the next character, `c`, from `s`, reporting errors in `e`.
  *
  * Since this is a branchless decoder, four bytes will be read from the
  * buffer regardless of the actual length of the next character. This
@@ -18,9 +18,9 @@ namespace {
  * occurs, this pointer will be a guess that depends on the particular
  * error, but it will always advance at least one byte.
  */
-constexpr inline static uint8_t *utf8_decode(uint8_t  *buf,
-                                             uint32_t &c,
-                                             int      &e) {
+constexpr inline static uint8_t *utf8_decode(const uint8_t  *s,
+                                             uint32_t       &c,
+                                             int            &e) {
         const char lengths[]  = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                                 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 3, 3, 4, 0};
         const int  masks[]    = {0x00, 0x7f, 0x1f, 0x0f, 0x07};
@@ -28,13 +28,12 @@ constexpr inline static uint8_t *utf8_decode(uint8_t  *buf,
         const int      shiftc[] = {0, 18, 12, 6, 0};
         const int      shifte[] = {0, 6, 4, 2, 0};
 
-        uint8_t *s   = buf;
         int      len = lengths[s[0] >> 3];
 
         // computes the next character early,
         // which improves performance by about 1-2%
         // (Apple clang 12.0.5 on an M1)
-        uint8_t *next = s + len + !len;
+        uint8_t *next = (uint8_t *)s + len + !len;
 
         /* Assume a four-byte character and load four bytes. Unused bits are
          * shifted out.
